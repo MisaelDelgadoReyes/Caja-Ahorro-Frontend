@@ -216,3 +216,5 @@ const Ahorros = () => {
 };
 
 export default Ahorros;
+
+// Componente principal de la vista de ahorros
