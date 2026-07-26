@@ -171,3 +171,5 @@ const Transacciones = () => {
 };
 
 export default Transacciones;
+
+// Vista general de las transacciones del usuario
