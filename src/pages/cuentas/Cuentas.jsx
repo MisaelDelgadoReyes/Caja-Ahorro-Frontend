@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import api from '../../api/axios';
 
 const extraerLista = (response) => {
@@ -43,19 +43,26 @@ const formatearDinero = (valor) => {
 
 const Cuentas = () => {
     const [cuentas, setCuentas] = useState([]);
+    const [socioEncontrado, setSocioEncontrado] = useState(null);
 
     const [tipoBusqueda, setTipoBusqueda] = useState('cedula');
     const [valorBusqueda, setValorBusqueda] = useState('');
 
+    const [mostrarFormulario, setMostrarFormulario] = useState(false);
+    const [tipoCuenta, setTipoCuenta] = useState('AHORRO');
+
     const [cargando, setCargando] = useState(true);
     const [buscando, setBuscando] = useState(false);
+    const [guardando, setGuardando] = useState(false);
 
     const [error, setError] = useState('');
     const [mensaje, setMensaje] = useState('');
+    const [exito, setExito] = useState('');
 
     const limpiarMensajes = () => {
         setError('');
         setMensaje('');
+        setExito('');
     };
 
     const cargarCuentas = async () => {
@@ -70,12 +77,15 @@ const Cuentas = () => {
             const listaCuentas = extraerLista(response);
 
             setCuentas(listaCuentas);
+            setSocioEncontrado(null);
+            setMostrarFormulario(false);
 
             if (listaCuentas.length === 0) {
                 setMensaje('No existen cuentas registradas.');
             }
         } catch (errorPeticion) {
             setCuentas([]);
+            setSocioEncontrado(null);
 
             setError(
                 obtenerMensajeError(
@@ -88,13 +98,17 @@ const Cuentas = () => {
         }
     };
 
+    /* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
     useEffect(() => {
         cargarCuentas();
     }, []);
+    /* eslint-enable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
 
     const manejarCambioTipoBusqueda = (event) => {
         setTipoBusqueda(event.target.value);
         setValorBusqueda('');
+        setSocioEncontrado(null);
+        setMostrarFormulario(false);
         limpiarMensajes();
     };
 
@@ -110,6 +124,8 @@ const Cuentas = () => {
         }
 
         setValorBusqueda(valor);
+        setSocioEncontrado(null);
+        setMostrarFormulario(false);
         limpiarMensajes();
     };
 
@@ -165,13 +181,56 @@ const Cuentas = () => {
         if (errorValidacion) {
             setError(errorValidacion);
             setMensaje('');
+            setExito('');
             return;
         }
 
         setBuscando(true);
         limpiarMensajes();
+        setSocioEncontrado(null);
+        setMostrarFormulario(false);
 
         try {
+            const valorLimpio = valorBusqueda.trim();
+
+            if (tipoBusqueda === 'cedula') {
+                const responseSocio = await api.get(
+                    `/api/v1/socios/cedula/${valorLimpio}`
+                );
+
+                const sociosEncontrados = extraerLista(responseSocio);
+
+                if (sociosEncontrados.length === 0) {
+                    setCuentas([]);
+                    setMensaje(
+                        'No existe ningún socio con la cédula ingresada.'
+                    );
+                    return;
+                }
+
+                const socio = sociosEncontrados[0];
+
+                setSocioEncontrado(socio);
+
+                const responseCuentas = await api.get(
+                    `/api/v1/cuentas/socio/${valorLimpio}`
+                );
+
+                const cuentasEncontradas = extraerLista(
+                    responseCuentas
+                );
+
+                setCuentas(cuentasEncontradas);
+
+                if (cuentasEncontradas.length === 0) {
+                    setMensaje(
+                        `El socio ${socio.nombres} ${socio.apellidos} existe, pero todavía no tiene cuentas registradas.`
+                    );
+                }
+
+                return;
+            }
+
             const response = await api.get(
                 obtenerRutaBusqueda()
             );
@@ -187,13 +246,20 @@ const Cuentas = () => {
             }
 
             setCuentas(cuentasEncontradas);
+
+            const socioCuenta = cuentasEncontradas[0]?.socio;
+
+            if (socioCuenta) {
+                setSocioEncontrado(socioCuenta);
+            }
         } catch (errorPeticion) {
             setCuentas([]);
+            setSocioEncontrado(null);
 
             setError(
                 obtenerMensajeError(
                     errorPeticion,
-                    'No se pudo realizar la búsqueda de cuentas.'
+                    'No se pudo realizar la búsqueda.'
                 )
             );
         } finally {
@@ -204,8 +270,93 @@ const Cuentas = () => {
     const limpiarBusqueda = async () => {
         setValorBusqueda('');
         setTipoBusqueda('cedula');
+        setSocioEncontrado(null);
+        setMostrarFormulario(false);
+        setTipoCuenta('AHORRO');
 
         await cargarCuentas();
+    };
+
+    const abrirFormulario = () => {
+        if (!socioEncontrado) {
+            setError(
+                'Primero debe buscar y seleccionar un socio.'
+            );
+            return;
+        }
+
+        if (!socioEncontrado.activo) {
+            setError(
+                'No se puede crear una cuenta para un socio inactivo.'
+            );
+            return;
+        }
+
+        setTipoCuenta('AHORRO');
+        setMostrarFormulario(true);
+        limpiarMensajes();
+    };
+
+    const cerrarFormulario = () => {
+        setMostrarFormulario(false);
+        setTipoCuenta('AHORRO');
+        limpiarMensajes();
+    };
+
+    const crearCuenta = async (event) => {
+        event.preventDefault();
+
+        if (!socioEncontrado) {
+            setError(
+                'No existe un socio seleccionado para crear la cuenta.'
+            );
+            return;
+        }
+
+        if (
+            tipoCuenta !== 'AHORRO' &&
+            tipoCuenta !== 'CORRIENTE'
+        ) {
+            setError('Seleccione un tipo de cuenta válido.');
+            return;
+        }
+
+        setGuardando(true);
+        limpiarMensajes();
+
+        const datosCuenta = {
+            cedulaSocio: socioEncontrado.cedula,
+            tipoCuenta,
+        };
+
+        try {
+            await api.post(
+                '/api/v1/cuentas/crear',
+                datosCuenta
+            );
+
+            const responseCuentas = await api.get(
+                `/api/v1/cuentas/socio/${socioEncontrado.cedula}`
+            );
+
+            const cuentasActualizadas = extraerLista(
+                responseCuentas
+            );
+
+            setCuentas(cuentasActualizadas);
+            setMostrarFormulario(false);
+            setTipoCuenta('AHORRO');
+            setExito('La cuenta fue creada correctamente.');
+        } catch (errorPeticion) {
+            setError(
+                obtenerMensajeError(
+                    errorPeticion,
+                    'No se pudo crear la cuenta.'
+                )
+            );
+        } finally {
+            setGuardando(false);
+        }
     };
 
     const obtenerPlaceholder = () => {
@@ -233,8 +384,7 @@ const Cuentas = () => {
                     </h2>
 
                     <p className="text-muted mb-0">
-                        Consulta las cuentas registradas en la caja de
-                        ahorro.
+                        Consulta y registra cuentas para los socios.
                     </p>
                 </div>
 
@@ -242,10 +392,11 @@ const Cuentas = () => {
                     type="button"
                     className="btn btn-outline-primary"
                     onClick={cargarCuentas}
-                    disabled={cargando || buscando}
+                    disabled={cargando || buscando || guardando}
                 >
                     Actualizar listado
                 </button>
+                
             </div>
 
             <div className="card shadow-sm mb-4">
@@ -271,7 +422,11 @@ const Cuentas = () => {
                                 className="form-select"
                                 value={tipoBusqueda}
                                 onChange={manejarCambioTipoBusqueda}
-                                disabled={buscando || cargando}
+                                disabled={
+                                    buscando ||
+                                    cargando ||
+                                    guardando
+                                }
                             >
                                 <option value="cedula">
                                     Cédula del socio
@@ -313,7 +468,11 @@ const Cuentas = () => {
                                         : 50
                                 }
                                 autoComplete="off"
-                                disabled={buscando || cargando}
+                                disabled={
+                                    buscando ||
+                                    cargando ||
+                                    guardando
+                                }
                             />
                         </div>
 
@@ -321,9 +480,15 @@ const Cuentas = () => {
                             <button
                                 type="submit"
                                 className="btn btn-primary w-100"
-                                disabled={buscando || cargando}
+                                disabled={
+                                    buscando ||
+                                    cargando ||
+                                    guardando
+                                }
                             >
-                                {buscando ? 'Buscando...' : 'Buscar'}
+                                {buscando
+                                    ? 'Buscando...'
+                                    : 'Buscar'}
                             </button>
                         </div>
 
@@ -332,7 +497,11 @@ const Cuentas = () => {
                                 type="button"
                                 className="btn btn-outline-secondary w-100"
                                 onClick={limpiarBusqueda}
-                                disabled={buscando || cargando}
+                                disabled={
+                                    buscando ||
+                                    cargando ||
+                                    guardando
+                                }
                             >
                                 Limpiar
                             </button>
@@ -342,20 +511,224 @@ const Cuentas = () => {
             </div>
 
             {error && (
-                <div
-                    className="alert alert-danger"
-                    role="alert"
-                >
+                <div className="alert alert-danger" role="alert">
                     {error}
                 </div>
             )}
 
-            {mensaje && !error && (
-                <div
-                    className="alert alert-info"
-                    role="alert"
-                >
+            {exito && (
+                <div className="alert alert-success" role="alert">
+                    {exito}
+                </div>
+            )}
+
+            {mensaje && !error && !exito && (
+                <div className="alert alert-info" role="alert">
                     {mensaje}
+                </div>
+            )}
+
+            {socioEncontrado && (
+                <div className="card shadow-sm mb-4">
+                    <div className="card-header bg-white d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+                        <strong>Información del socio</strong>
+
+                        <button
+                            type="button"
+                            className="btn btn-primary btn-sm"
+                            onClick={abrirFormulario}
+                            disabled={
+                                guardando ||
+                                !socioEncontrado.activo
+                            }
+                        >
+                            Nueva cuenta
+                        </button>
+                    </div>
+
+                    <div className="card-body">
+                        <div className="row g-3">
+                            <div className="col-md-4">
+                                <span className="text-muted d-block">
+                                    Nombre completo
+                                </span>
+
+                                <strong>
+                                    {socioEncontrado.nombres}{' '}
+                                    {socioEncontrado.apellidos}
+                                </strong>
+                            </div>
+
+                            <div className="col-md-2">
+                                <span className="text-muted d-block">
+                                    Cédula
+                                </span>
+
+                                <strong>
+                                    {socioEncontrado.cedula}
+                                </strong>
+                            </div>
+
+                            <div className="col-md-3">
+                                <span className="text-muted d-block">
+                                    Correo
+                                </span>
+
+                                <strong>
+                                    {socioEncontrado.correo ||
+                                        'No registrado'}
+                                </strong>
+                            </div>
+
+                            <div className="col-md-2">
+                                <span className="text-muted d-block">
+                                    Teléfono
+                                </span>
+
+                                <strong>
+                                    {socioEncontrado.telefono ||
+                                        'No registrado'}
+                                </strong>
+                            </div>
+
+                            <div className="col-md-1">
+                                <span className="text-muted d-block">
+                                    Estado
+                                </span>
+
+                                <span
+                                    className={`badge ${
+                                        socioEncontrado.activo
+                                            ? 'text-bg-success'
+                                            : 'text-bg-secondary'
+                                    }`}
+                                >
+                                    {socioEncontrado.activo
+                                        ? 'Activo'
+                                        : 'Inactivo'}
+                                </span>
+                            </div>
+
+                            <div className="col-12">
+                                <span className="text-muted d-block">
+                                    Dirección
+                                </span>
+
+                                <strong>
+                                    {socioEncontrado.direccion ||
+                                        'No registrada'}
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {mostrarFormulario && socioEncontrado && (
+                <div className="card shadow-sm mb-4">
+                    <div className="card-header bg-white d-flex justify-content-between align-items-center">
+                        <strong>Crear nueva cuenta</strong>
+
+                        <button
+                            type="button"
+                            className="btn-close"
+                            aria-label="Cerrar"
+                            onClick={cerrarFormulario}
+                            disabled={guardando}
+                        />
+                    </div>
+
+                    <div className="card-body">
+                        <form
+                            className="row g-3 align-items-end"
+                            onSubmit={crearCuenta}
+                        >
+                            <div className="col-md-5">
+                                <label className="form-label">
+                                    Socio
+                                </label>
+
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    value={`${socioEncontrado.nombres} ${socioEncontrado.apellidos}`}
+                                    disabled
+                                />
+                            </div>
+
+                            <div className="col-md-3">
+                                <label className="form-label">
+                                    Cédula
+                                </label>
+
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    value={socioEncontrado.cedula}
+                                    disabled
+                                />
+                            </div>
+
+                            <div className="col-md-4">
+                                <label
+                                    htmlFor="tipoCuenta"
+                                    className="form-label"
+                                >
+                                    Tipo de cuenta
+                                </label>
+
+                                <select
+                                    id="tipoCuenta"
+                                    className="form-select"
+                                    value={tipoCuenta}
+                                    onChange={(event) =>
+                                        setTipoCuenta(
+                                            event.target.value
+                                        )
+                                    }
+                                    disabled={guardando}
+                                >
+                                    <option value="AHORRO">
+                                        Ahorro
+                                    </option>
+
+                                    <option value="CORRIENTE">
+                                        Corriente
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div className="col-12">
+                                <div className="alert alert-light border mb-0">
+                                    El número de cuenta, saldo inicial,
+                                    fecha de apertura y estado serán
+                                    generados automáticamente por el
+                                    sistema.
+                                </div>
+                            </div>
+
+                            <div className="col-12 d-flex justify-content-end gap-2">
+                                <button
+                                    type="button"
+                                    className="btn btn-outline-secondary"
+                                    onClick={cerrarFormulario}
+                                    disabled={guardando}
+                                >
+                                    Cancelar
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary"
+                                    disabled={guardando}
+                                >
+                                    {guardando
+                                        ? 'Creando cuenta...'
+                                        : 'Crear cuenta'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             )}
 
@@ -391,8 +764,7 @@ const Cuentas = () => {
                             </h5>
 
                             <p className="text-muted mb-0">
-                                Registra una cuenta o realiza otra
-                                búsqueda.
+                                Busca un socio y crea una nueva cuenta.
                             </p>
                         </div>
                     ) : (
@@ -414,9 +786,7 @@ const Cuentas = () => {
                                 <tbody>
                                     {cuentas.map((cuenta) => (
                                         <tr key={cuenta.idCuenta}>
-                                            <td>
-                                                {cuenta.idCuenta}
-                                            </td>
+                                            <td>{cuenta.idCuenta}</td>
 
                                             <td>
                                                 <span className="fw-semibold">

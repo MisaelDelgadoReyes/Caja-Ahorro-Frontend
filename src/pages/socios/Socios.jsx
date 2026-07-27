@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import api from '../../api/axios';
 
 const FORMULARIO_INICIAL = {
@@ -106,10 +106,7 @@ const Socios = () => {
         limpiarMensajes();
 
         try {
-            const response = await api.get(
-                '/api/v1/socios/consultar'
-            );
-
+            const response = await api.get('/api/v1/socios/consultar');
             const listaSocios = extraerLista(response);
 
             setSocios(listaSocios);
@@ -131,9 +128,11 @@ const Socios = () => {
         }
     };
 
+    /* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
     useEffect(() => {
         cargarSocios();
     }, []);
+    /* eslint-enable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
 
     const manejarCambioCedulaBusqueda = (event) => {
         const valor = event.target.value
@@ -354,11 +353,10 @@ const Socios = () => {
                                     name="cedula"
                                     type="text"
                                     inputMode="numeric"
-                                    className={`form-control ${
-                                        erroresFormulario.cedula
+                                    className={`form-control ${erroresFormulario.cedula
                                             ? 'is-invalid'
                                             : ''
-                                    }`}
+                                        }`}
                                     value={formulario.cedula}
                                     onChange={manejarCambioFormulario}
                                     placeholder="10 dígitos"
@@ -385,11 +383,10 @@ const Socios = () => {
                                     id="nombres"
                                     name="nombres"
                                     type="text"
-                                    className={`form-control ${
-                                        erroresFormulario.nombres
+                                    className={`form-control ${erroresFormulario.nombres
                                             ? 'is-invalid'
                                             : ''
-                                    }`}
+                                        }`}
                                     value={formulario.nombres}
                                     onChange={manejarCambioFormulario}
                                     placeholder="Nombres del socio"
@@ -416,11 +413,10 @@ const Socios = () => {
                                     id="apellidos"
                                     name="apellidos"
                                     type="text"
-                                    className={`form-control ${
-                                        erroresFormulario.apellidos
+                                    className={`form-control ${erroresFormulario.apellidos
                                             ? 'is-invalid'
                                             : ''
-                                    }`}
+                                        }`}
                                     value={formulario.apellidos}
                                     onChange={manejarCambioFormulario}
                                     placeholder="Apellidos del socio"
@@ -447,11 +443,10 @@ const Socios = () => {
                                     id="correo"
                                     name="correo"
                                     type="email"
-                                    className={`form-control ${
-                                        erroresFormulario.correo
+                                    className={`form-control ${erroresFormulario.correo
                                             ? 'is-invalid'
                                             : ''
-                                    }`}
+                                        }`}
                                     value={formulario.correo}
                                     onChange={manejarCambioFormulario}
                                     placeholder="correo@ejemplo.com"
@@ -479,11 +474,10 @@ const Socios = () => {
                                     name="telefono"
                                     type="text"
                                     inputMode="numeric"
-                                    className={`form-control ${
-                                        erroresFormulario.telefono
+                                    className={`form-control ${erroresFormulario.telefono
                                             ? 'is-invalid'
                                             : ''
-                                    }`}
+                                        }`}
                                     value={formulario.telefono}
                                     onChange={manejarCambioFormulario}
                                     placeholder="Ejemplo: 0999999999"
@@ -510,11 +504,10 @@ const Socios = () => {
                                     id="direccion"
                                     name="direccion"
                                     type="text"
-                                    className={`form-control ${
-                                        erroresFormulario.direccion
+                                    className={`form-control ${erroresFormulario.direccion
                                             ? 'is-invalid'
                                             : ''
-                                    }`}
+                                        }`}
                                     value={formulario.direccion}
                                     onChange={manejarCambioFormulario}
                                     placeholder="Dirección del socio"
@@ -731,11 +724,10 @@ const Socios = () => {
 
                                             <td>
                                                 <span
-                                                    className={`badge ${
-                                                        socio.activo
+                                                    className={`badge ${socio.activo
                                                             ? 'text-bg-success'
                                                             : 'text-bg-secondary'
-                                                    }`}
+                                                        }`}
                                                 >
                                                     {socio.activo
                                                         ? 'Activo'
