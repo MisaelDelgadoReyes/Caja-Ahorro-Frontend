@@ -305,6 +305,8 @@ const Socios = () => {
                         className="btn btn-outline-primary"
                         onClick={cargarSocios}
                         disabled={cargando || buscando || guardando}
+                        title="Volver a cargar todos los socios"
+                        aria-label="Actualizar listado de socios"
                     >
                         Actualizar listado
                     </button>
@@ -314,6 +316,8 @@ const Socios = () => {
                         className="btn btn-primary"
                         onClick={abrirFormulario}
                         disabled={guardando}
+                        title="Abrir formulario para registrar un socio"
+                        aria-label="Registrar nuevo socio"
                     >
                         Nuevo socio
                     </button>
@@ -362,6 +366,8 @@ const Socios = () => {
                                     placeholder="10 dígitos"
                                     maxLength={10}
                                     disabled={guardando}
+                                    autoFocus
+                                    aria-label="Cédula del nuevo socio"
                                 />
 
                                 {erroresFormulario.cedula && (
@@ -575,6 +581,7 @@ const Socios = () => {
                                 onChange={manejarCambioCedulaBusqueda}
                                 maxLength={10}
                                 autoComplete="off"
+                                aria-label="Buscar socio por número de cédula"
                             />
 
                             <div className="form-text">

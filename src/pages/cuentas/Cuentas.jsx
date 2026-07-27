@@ -393,6 +393,8 @@ const Cuentas = () => {
                     className="btn btn-outline-primary"
                     onClick={cargarCuentas}
                     disabled={cargando || buscando || guardando}
+                    title="Volver a cargar todas las cuentas"
+                    aria-label="Actualizar listado de cuentas"
                 >
                     Actualizar listado
                 </button>
@@ -422,11 +424,8 @@ const Cuentas = () => {
                                 className="form-select"
                                 value={tipoBusqueda}
                                 onChange={manejarCambioTipoBusqueda}
-                                disabled={
-                                    buscando ||
-                                    cargando ||
-                                    guardando
-                                }
+                                disabled={buscando || cargando || guardando}
+                                aria-label="Seleccionar tipo de búsqueda de cuentas"
                             >
                                 <option value="cedula">
                                     Cédula del socio
@@ -468,11 +467,8 @@ const Cuentas = () => {
                                         : 50
                                 }
                                 autoComplete="off"
-                                disabled={
-                                    buscando ||
-                                    cargando ||
-                                    guardando
-                                }
+                                disabled={buscando || cargando || guardando}
+                                aria-label="Valor para buscar una cuenta"
                             />
                         </div>
 
@@ -541,6 +537,8 @@ const Cuentas = () => {
                                 guardando ||
                                 !socioEncontrado.activo
                             }
+                            title="Crear una nueva cuenta para este socio"
+                            aria-label={`Crear cuenta para ${socioEncontrado.nombres} ${socioEncontrado.apellidos}`}
                         >
                             Nueva cuenta
                         </button>
@@ -676,17 +674,15 @@ const Cuentas = () => {
                                 >
                                     Tipo de cuenta
                                 </label>
-
                                 <select
                                     id="tipoCuenta"
                                     className="form-select"
                                     value={tipoCuenta}
                                     onChange={(event) =>
-                                        setTipoCuenta(
-                                            event.target.value
-                                        )
+                                        setTipoCuenta(event.target.value)
                                     }
                                     disabled={guardando}
+                                    aria-label="Seleccionar tipo de cuenta"
                                 >
                                     <option value="AHORRO">
                                         Ahorro
