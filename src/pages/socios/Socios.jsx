@@ -79,6 +79,17 @@ const validarFormulario = (formulario) => {
     return errores;
 };
 
+const ordenarSocios = (listaSocios) => {
+    return [...listaSocios].sort((socioA, socioB) => {
+        const nombreA = `${socioA.apellidos ?? ''} ${socioA.nombres ?? ''}`;
+        const nombreB = `${socioB.apellidos ?? ''} ${socioB.nombres ?? ''}`;
+
+        return nombreA.localeCompare(nombreB, 'es', {
+            sensitivity: 'base',
+        });
+    });
+};
+
 const Socios = () => {
     const [socios, setSocios] = useState([]);
     const [cedulaBusqueda, setCedulaBusqueda] = useState('');
@@ -107,8 +118,9 @@ const Socios = () => {
 
         try {
             const response = await api.get('/api/v1/socios/consultar');
-            const listaSocios = extraerLista(response);
-
+            const listaSocios = ordenarSocios(
+                extraerLista(response)
+            );
             setSocios(listaSocios);
 
             if (listaSocios.length === 0) {
@@ -170,8 +182,10 @@ const Socios = () => {
                 `/api/v1/socios/cedula/${cedulaLimpia}`
             );
 
-            const sociosEncontrados = extraerLista(response);
-
+            const sociosEncontrados = ordenarSocios(
+                extraerLista(response)
+            );
+            
             if (sociosEncontrados.length === 0) {
                 setSocios([]);
                 setMensaje(

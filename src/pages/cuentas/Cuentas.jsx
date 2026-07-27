@@ -41,6 +41,15 @@ const formatearDinero = (valor) => {
     });
 };
 
+const ordenarCuentas = (listaCuentas) => {
+    return [...listaCuentas].sort((cuentaA, cuentaB) => {
+        return (
+            Number(cuentaB.idCuenta ?? 0) -
+            Number(cuentaA.idCuenta ?? 0)
+        );
+    });
+};
+
 const Cuentas = () => {
     const [cuentas, setCuentas] = useState([]);
     const [socioEncontrado, setSocioEncontrado] = useState(null);
@@ -74,8 +83,10 @@ const Cuentas = () => {
                 '/api/v1/cuentas/consultar'
             );
 
-            const listaCuentas = extraerLista(response);
-
+            const listaCuentas = ordenarCuentas(
+                extraerLista(response)
+            );
+            
             setCuentas(listaCuentas);
             setSocioEncontrado(null);
             setMostrarFormulario(false);
@@ -216,8 +227,8 @@ const Cuentas = () => {
                     `/api/v1/cuentas/socio/${valorLimpio}`
                 );
 
-                const cuentasEncontradas = extraerLista(
-                    responseCuentas
+                const cuentasEncontradas = ordenarCuentas(
+                    extraerLista(responseCuentas)
                 );
 
                 setCuentas(cuentasEncontradas);
@@ -235,7 +246,9 @@ const Cuentas = () => {
                 obtenerRutaBusqueda()
             );
 
-            const cuentasEncontradas = extraerLista(response);
+            const cuentasEncontradas = ordenarCuentas(
+                extraerLista(response)
+            );
 
             if (cuentasEncontradas.length === 0) {
                 setCuentas([]);
@@ -339,8 +352,8 @@ const Cuentas = () => {
                 `/api/v1/cuentas/socio/${socioEncontrado.cedula}`
             );
 
-            const cuentasActualizadas = extraerLista(
-                responseCuentas
+            const cuentasActualizadas = ordenarCuentas(
+                extraerLista(responseCuentas)
             );
 
             setCuentas(cuentasActualizadas);
