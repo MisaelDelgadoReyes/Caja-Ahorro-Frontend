@@ -1,76 +1,53 @@
-import React, { useEffect, useState } from 'react';
-import api from '../api/axios';
+import React from "react";
+
+import DashboardCards from "../components/dashboard/DashboardCards";
+import DashboardChart from "../components/dashboard/DashboardChart";
+import DashboardPieChart from "../components/dashboard/DashboardPieChart";
+import FinancialSummary from "../components/dashboard/FinancialSummary";
+import RecentActivity from "../components/dashboard/RecentActivity";
+import QuickAccess from "../components/dashboard/QuickAccess";
 
 const Dashboard = () => {
-  const [stats, setStats] = useState({
-    totalSocios: 0,
-    totalCuentas: 0,
-    totalAhorros: 0,
-    totalTransacciones: 0,
-  });
+    return (
+        <div className="container-fluid">
 
-  useEffect(() => {
-    api
-      .get('/api/v1/dashboard/stats')
-      .then((res) => {
-        setStats(res.data);
-      })
-      .catch((err) => {
-        console.error('Error al cargar estadísticas del dashboard', err);
-      });
-  }, []);
+            <div className="mb-4">
+                <h2 className="fw-bold">Dashboard</h2>
+                <p className="text-muted">
+                    Bienvenido al Sistema de Caja de Ahorro
+                </p>
+            </div>
 
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-    }).format(value);
-  };
+            <DashboardCards />
 
-  return (
-    <div>
-      <h2>Bienvenido al sistema</h2>
-      <hr />
-      <div className="row mt-4">
-        <div className="col-md-3 mb-3">
-          <div className="card text-white bg-primary shadow h-100">
-            <div className="card-body">
-              <h5 className="card-title">Total socios</h5>
-              <p className="card-text fs-2">{stats.totalSocios}</p>
+            <div className="row mt-4">
+
+                <div className="col-lg-8">
+                    <DashboardChart />
+                </div>
+
+                <div className="col-lg-4">
+                    <DashboardPieChart />
+                </div>
+
             </div>
-          </div>
-        </div>
-        <div className="col-md-3 mb-3">
-          <div className="card text-white bg-success shadow h-100">
-            <div className="card-body">
-              <h5 className="card-title">Total cuentas</h5>
-              <p className="card-text fs-2">{stats.totalCuentas}</p>
+
+            <div className="row mt-4">
+
+                <div className="col-lg-6">
+                    <RecentActivity />
+                </div>
+
+                <div className="col-lg-6">
+                    <QuickAccess />
+                </div>
+
             </div>
-          </div>
+            
+            <FinancialSummary />
+
         </div>
-        <div className="col-md-3 mb-3">
-          <div className="card text-white bg-warning shadow h-100">
-            <div className="card-body">
-              <h5 className="card-title">Total ahorros</h5>
-              <p className="card-text fs-2">{formatCurrency(stats.totalAhorros)}</p>
-            </div>
-          </div>
-        </div>
-        <div className="col-md-3 mb-3">
-          <div className="card text-white bg-danger shadow h-100">
-            <div className="card-body">
-              <h5 className="card-title">Total transacciones</h5>
-              <p className="card-text fs-2">{stats.totalTransacciones}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <p className="text-muted mt-3">Luego el integrante 4 lo mejora.</p>
-    </div>
-  );
+    );
 };
 
 export default Dashboard;
-
-
-

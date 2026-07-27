@@ -8,6 +8,7 @@ import Socios from '../pages/socios/Socios';
 import Cuentas from '../pages/cuentas/Cuentas';
 import Ahorros from '../pages/ahorros/Ahorros';
 import Transacciones from '../pages/transacciones/Transacciones';
+import Reportes from '../pages/Reportes';
 
 const AppRouter = () => {
     return (
@@ -24,6 +25,7 @@ const AppRouter = () => {
                         <Route path="/cuentas" element={<Cuentas />} />
                         <Route path="/ahorros" element={<Ahorros />} />
                         <Route path="/transacciones" element={<Transacciones />} />
+                        <Route path="/reportes" element={<Reportes />} />
                         {/* Redirección por defecto si la ruta no coincide */}
                         <Route path="*" element={<Navigate to="/dashboard" />} />
                     </Route>

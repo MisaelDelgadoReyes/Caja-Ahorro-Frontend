@@ -14,6 +14,12 @@ const Sidebar = () => {
                     Dashboard
                 </Link>
                 <Link 
+                    to="/reportes" 
+                    className={`list-group-item list-group-item-action bg-light ${location.pathname.startsWith('/reportes') ? 'active' : ''}`}
+                >
+                    Reportes
+                </Link>
+                <Link 
                     to="/socios" 
                     className={`list-group-item list-group-item-action bg-light ${location.pathname.startsWith('/socios') ? 'active' : ''}`}
                 >
