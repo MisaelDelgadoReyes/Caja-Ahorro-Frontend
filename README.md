@@ -44,5 +44,3 @@ El proyecto estará disponible (generalmente en `http://localhost:5173`).
 - **React Router DOM**: Para la navegación y rutas privadas.
 - **Bootstrap**: Para el diseño y responsive.
 - **Axios**: Para peticiones HTTP.
-
-**Nota:** Cada integrante del equipo debe trabajar únicamente dentro de las carpetas asignadas a sus módulos para evitar conflictos.
