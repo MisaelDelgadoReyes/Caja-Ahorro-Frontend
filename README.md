@@ -4,23 +4,27 @@ Proyecto frontend para la gestión de la caja de ahorro. Construido con React, V
 
 ### Responsabilidades
 
-#### Backend
+## 👥 Distribución de Responsabilidades
 
-https://github.com/MisaelDelgadoReyes/Sistema-Caja-Ahorro
+El desarrollo del proyecto fue dividido entre los integrantes del equipo de la siguiente manera.
 
-- Misael Delgado Arquitectura Base y Seguridad (Módulo Core)
-- Alex Balón Gestión de Socios y Cuentas
-- Denisse Pazmiño Ciclo de Vida del Crédito y Amortización
-- Andres Moran Transacciones de Ventanilla y Libro Diario (Contabilidad)
+### Backend
+
+| Integrante | Responsabilidad |
+|------------|-----------------|
+| **Misael Delgado** | Arquitectura base del sistema y configuración de seguridad (Módulo Core). |
+| **Alex Balón** | Gestión de Socios y Gestión de Cuentas. |
+| **Denisse Pazmiño** | Ciclo de Vida del Crédito y Amortización. |
+| **Andrés Morán** | Transacciones de Ventanilla y Libro Diario (Contabilidad). |
 
 ### Frontend
 
-https://github.com/MisaelDelgadoReyes/Caja-Ahorro-Frontend
-
-- Misael Delgado creación de login y seguridad.
-- Denisse Pazmiño pagina de socios, cuentas.
-- Andres Moran paginas para ahorros, transacciones.
-- Alex Balón Dashboard, Reportes, Gráficas, Pruebas, Documentación
+| Integrante | Responsabilidad |
+|------------|-----------------|
+| **Misael Delgado** | Inicio de sesión (Login) y seguridad de la aplicación. |
+| **Denisse Pazmiño** | Interfaces de Socios y Cuentas. |
+| **Andrés Morán** | Interfaces de Ahorros y Transacciones. |
+| **Alex Balón** | Dashboard, Reportes, Gráficas, Pruebas y Documentación. |
 
 ## Requisitos previos
 
