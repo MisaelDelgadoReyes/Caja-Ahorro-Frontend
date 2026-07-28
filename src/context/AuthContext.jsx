@@ -1,15 +1,12 @@
-import React, { createContext, useState, useEffect } from 'react';
+import { createContext, useState } from 'react';
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [usuario, setUsuario] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('token') || null);
-    const [isAuthenticated, setIsAuthenticated] = useState(!!token);
-
-    useEffect(() => {
-        setIsAuthenticated(!!token);
-    }, [token]);
+    const isAuthenticated = !!token;
 
     const login = (userData, userToken) => {
         setUsuario(userData);

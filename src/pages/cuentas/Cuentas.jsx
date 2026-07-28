@@ -360,10 +360,10 @@ const Cuentas = () => {
     };
 
     return (
-        <div>
+        <div className="container-fluid py-2">
             <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
                 <div>
-                    <h2 className="mb-1">Gestión de Cuentas</h2>
+                    <h2 className="mb-1 text-dark fw-bold">Gestión de Cuentas</h2>
                     <p className="text-muted mb-0">
                         Consulta y registra cuentas para los socios.
                     </p>
@@ -372,41 +372,40 @@ const Cuentas = () => {
                 <div className="d-flex gap-2">
                     <button
                         type="button"
-                        className="btn btn-outline-primary"
+                        className="btn btn-outline-secondary d-flex align-items-center gap-2"
                         onClick={cargarCuentas}
                         disabled={cargando || buscando || guardando}
                     >
-                        Actualizar listado
+                        <span>🔄</span> Actualizar
                     </button>
 
                     <button
                         type="button"
-                        className="btn btn-primary"
+                        className="btn btn-primary d-flex align-items-center gap-2"
                         onClick={abrirFormulario}
                         disabled={guardando}
                     >
-                        Nueva cuenta
+                        <span>➕</span> Nueva cuenta
                     </button>
                 </div>
             </div>
 
             {mostrarFormulario && (
-                <div className="card shadow-sm mb-4">
-                    <div className="card-header bg-white d-flex justify-content-between align-items-center">
-                        <strong>Registrar nueva cuenta</strong>
+                <div className="saas-card mb-4 border-0">
+                    <div className="card-header bg-white border-bottom-0 pt-4 pb-2 px-4 d-flex justify-content-between align-items-center">
+                        <h5 className="mb-0 fw-bold text-dark">Registrar nueva cuenta</h5>
                         <button
                             type="button"
                             className="btn-close"
-                            aria-label="Cerrar"
                             onClick={cerrarFormulario}
                             disabled={guardando}
                         />
                     </div>
 
-                    <div className="card-body">
-                        <form className="row g-3 align-items-end" onSubmit={crearCuenta}>
+                    <div className="card-body px-4 pb-4">
+                        <form className="row g-4 align-items-end" onSubmit={crearCuenta}>
                             <div className="col-md-6">
-                                <label htmlFor="cedulaRegistro" className="form-label">
+                                <label htmlFor="cedulaRegistro" className="form-label fw-semibold" style={{ fontSize: '13px' }}>
                                     Cédula del socio
                                 </label>
                                 <input
@@ -422,13 +421,13 @@ const Cuentas = () => {
                                     disabled={guardando}
                                     autoFocus
                                 />
-                                <div className="form-text">
+                                <div className="form-text mt-2">
                                     El socio debe existir antes de registrar la cuenta.
                                 </div>
                             </div>
 
                             <div className="col-md-6">
-                                <label htmlFor="tipoCuenta" className="form-label">
+                                <label htmlFor="tipoCuenta" className="form-label fw-semibold" style={{ fontSize: '13px' }}>
                                     Tipo de cuenta
                                 </label>
                                 <select
@@ -443,16 +442,16 @@ const Cuentas = () => {
                                 </select>
                             </div>
 
-                            <div className="col-12">
-                                <div className="alert alert-light border mb-0">
-                                    El número de cuenta, saldo inicial y demás datos serán generados automáticamente por el sistema.
+                            <div className="col-12 mt-4">
+                                <div className="alert alert-info border-0 rounded-3 mb-0" style={{ backgroundColor: '#e0f2fe', color: '#075985' }}>
+                                    💡 El número de cuenta, saldo inicial y demás datos serán generados automáticamente por el sistema.
                                 </div>
                             </div>
 
-                            <div className="col-12 d-flex justify-content-end gap-2">
+                            <div className="col-12 d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
                                 <button
                                     type="button"
-                                    className="btn btn-outline-secondary"
+                                    className="btn btn-outline-secondary px-4"
                                     onClick={cerrarFormulario}
                                     disabled={guardando}
                                 >
@@ -460,7 +459,7 @@ const Cuentas = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="btn btn-primary"
+                                    className="btn btn-primary px-4"
                                     disabled={guardando}
                                 >
                                     {guardando ? 'Registrando...' : 'Registrar cuenta'}
@@ -471,113 +470,123 @@ const Cuentas = () => {
                 </div>
             )}
 
-            <div className="card shadow-sm mb-4">
-                <div className="card-header bg-white">
-                    <strong>Buscar cuentas</strong>
+            <div className="row mb-4">
+                <div className="col-lg-8">
+                    <div className="saas-card border-0 h-100">
+                        <div className="card-body p-4">
+                            <h6 className="fw-bold mb-3 text-dark">Buscar cuentas</h6>
+                            <form className="row g-3 align-items-end" onSubmit={buscarCuentas}>
+                                <div className="col-md-4">
+                                    <label htmlFor="tipoBusqueda" className="form-label fw-semibold" style={{ fontSize: '13px' }}>
+                                        Buscar por
+                                    </label>
+                                    <select
+                                        id="tipoBusqueda"
+                                        className="form-select"
+                                        value={tipoBusqueda}
+                                        onChange={manejarCambioTipoBusqueda}
+                                        disabled={buscando || cargando || guardando}
+                                    >
+                                        <option value="cedula">Cédula del socio</option>
+                                        <option value="numero">Número de cuenta</option>
+                                        <option value="id">ID de cuenta</option>
+                                    </select>
+                                </div>
+
+                                <div className="col-md-4">
+                                    <label htmlFor="valorBusqueda" className="form-label fw-semibold" style={{ fontSize: '13px' }}>
+                                        Valor
+                                    </label>
+                                    <input
+                                        id="valorBusqueda"
+                                        type="text"
+                                        inputMode={tipoBusqueda === 'numero' ? 'text' : 'numeric'}
+                                        className="form-control"
+                                        value={valorBusqueda}
+                                        onChange={manejarCambioValorBusqueda}
+                                        placeholder={obtenerPlaceholder()}
+                                        maxLength={tipoBusqueda === 'cedula' ? 10 : 50}
+                                        autoComplete="off"
+                                        disabled={buscando || cargando || guardando}
+                                    />
+                                </div>
+
+                                <div className="col-md-2">
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary w-100"
+                                        disabled={buscando || cargando || guardando}
+                                    >
+                                        {buscando ? 'Buscando...' : 'Buscar'}
+                                    </button>
+                                </div>
+
+                                <div className="col-md-2">
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline-secondary w-100"
+                                        onClick={limpiarBusqueda}
+                                        disabled={buscando || cargando || guardando}
+                                    >
+                                        Limpiar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <div className="card-body">
-                    <form className="row g-3 align-items-end" onSubmit={buscarCuentas}>
-                        <div className="col-md-4">
-                            <label htmlFor="tipoBusqueda" className="form-label">
-                                Buscar por
-                            </label>
-                            <select
-                                id="tipoBusqueda"
-                                className="form-select"
-                                value={tipoBusqueda}
-                                onChange={manejarCambioTipoBusqueda}
-                                disabled={buscando || cargando || guardando}
-                            >
-                                <option value="cedula">Cédula del socio</option>
-                                <option value="numero">Número de cuenta</option>
-                                <option value="id">ID de cuenta</option>
-                            </select>
+                <div className="col-lg-4 mt-3 mt-lg-0">
+                    <div className="saas-card border-0 h-100 bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center p-4">
+                        <div className="text-center">
+                            <h2 className="fw-bold mb-0">{cuentas.length}</h2>
+                            <span className="fw-medium">Cuentas Activas</span>
                         </div>
-
-                        <div className="col-md-4">
-                            <label htmlFor="valorBusqueda" className="form-label">
-                                Valor
-                            </label>
-                            <input
-                                id="valorBusqueda"
-                                type="text"
-                                inputMode={tipoBusqueda === 'numero' ? 'text' : 'numeric'}
-                                className="form-control"
-                                value={valorBusqueda}
-                                onChange={manejarCambioValorBusqueda}
-                                placeholder={obtenerPlaceholder()}
-                                maxLength={tipoBusqueda === 'cedula' ? 10 : 50}
-                                autoComplete="off"
-                                disabled={buscando || cargando || guardando}
-                            />
-                        </div>
-
-                        <div className="col-md-2">
-                            <button
-                                type="submit"
-                                className="btn btn-primary w-100"
-                                disabled={buscando || cargando || guardando}
-                            >
-                                {buscando ? 'Buscando...' : 'Buscar'}
-                            </button>
-                        </div>
-
-                        <div className="col-md-2">
-                            <button
-                                type="button"
-                                className="btn btn-outline-secondary w-100"
-                                onClick={limpiarBusqueda}
-                                disabled={buscando || cargando || guardando}
-                            >
-                                Limpiar
-                            </button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
 
-            {error && <div className="alert alert-danger">{error}</div>}
-            {exito && <div className="alert alert-success">{exito}</div>}
+            {error && <div className="alert alert-danger border-0 rounded-3" style={{ backgroundColor: '#fee2e2', color: '#991b1b' }}>{error}</div>}
+            {exito && <div className="alert alert-success border-0 rounded-3" style={{ backgroundColor: '#d1fae5', color: '#065f46' }}>{exito}</div>}
             {mensaje && !error && !exito && (
-                <div className="alert alert-info">{mensaje}</div>
+                <div className="alert alert-info border-0 rounded-3" style={{ backgroundColor: '#e0f2fe', color: '#075985' }}>{mensaje}</div>
             )}
 
             {socioEncontrado && (
-                <div className="card shadow-sm mb-4">
-                    <div className="card-header bg-white d-flex justify-content-between align-items-center">
-                        <strong>Información del socio</strong>
+                <div className="saas-card mb-4 border-0 border-start border-primary border-4 rounded-3">
+                    <div className="card-header bg-white border-0 pt-4 pb-2 px-4 d-flex justify-content-between align-items-center">
+                        <h6 className="fw-bold text-dark mb-0">Información del socio</h6>
                         <button
                             type="button"
-                            className="btn btn-primary btn-sm"
+                            className="btn btn-primary btn-sm px-3"
                             onClick={abrirFormulario}
                             disabled={guardando || socioEncontrado.activo === false}
                         >
                             Nueva cuenta
                         </button>
                     </div>
-                    <div className="card-body">
-                        <div className="row g-3">
+                    <div className="card-body px-4 pb-4">
+                        <div className="row g-4">
                             <div className="col-md-4">
-                                <span className="text-muted d-block">Nombre completo</span>
-                                <strong>
+                                <span className="text-muted d-block" style={{ fontSize: '13px' }}>Nombre completo</span>
+                                <strong className="text-dark">
                                     {socioEncontrado.nombres} {socioEncontrado.apellidos}
                                 </strong>
                             </div>
                             <div className="col-md-3">
-                                <span className="text-muted d-block">Cédula</span>
-                                <strong>{socioEncontrado.cedula}</strong>
+                                <span className="text-muted d-block" style={{ fontSize: '13px' }}>Cédula</span>
+                                <strong className="text-dark">{socioEncontrado.cedula}</strong>
                             </div>
                             <div className="col-md-3">
-                                <span className="text-muted d-block">Correo</span>
-                                <strong>{socioEncontrado.correo || 'No registrado'}</strong>
+                                <span className="text-muted d-block" style={{ fontSize: '13px' }}>Correo</span>
+                                <strong className="text-dark">{socioEncontrado.correo || 'No registrado'}</strong>
                             </div>
                             <div className="col-md-2">
-                                <span className="text-muted d-block">Estado</span>
+                                <span className="text-muted d-block mb-1" style={{ fontSize: '13px' }}>Estado</span>
                                 <span
                                     className={`badge ${
                                         socioEncontrado.activo === false
-                                            ? 'text-bg-secondary'
-                                            : 'text-bg-success'
+                                            ? 'bg-secondary'
+                                            : 'bg-success'
                                     }`}
                                 >
                                     {socioEncontrado.activo === false ? 'Inactivo' : 'Activo'}
@@ -588,12 +597,7 @@ const Cuentas = () => {
                 </div>
             )}
 
-            <div className="card shadow-sm">
-                <div className="card-header bg-white d-flex justify-content-between align-items-center">
-                    <strong>Cuentas registradas</strong>
-                    <span className="badge text-bg-primary">{cuentas.length}</span>
-                </div>
-
+            <div className="saas-card border-0">
                 <div className="card-body p-0">
                     {cargando ? (
                         <div className="text-center py-5">
@@ -604,7 +608,8 @@ const Cuentas = () => {
                         </div>
                     ) : cuentas.length === 0 ? (
                         <div className="text-center py-5 px-3">
-                            <h5 className="mb-2">No hay cuentas para mostrar</h5>
+                            <div style={{ fontSize: '48px', opacity: 0.5 }}>💳</div>
+                            <h5 className="mb-2 mt-3 fw-semibold text-dark">No hay cuentas para mostrar</h5>
                             <p className="text-muted mb-0">
                                 Registra una nueva cuenta o realiza otra búsqueda.
                             </p>
@@ -614,53 +619,55 @@ const Cuentas = () => {
                             <table className="table table-hover align-middle mb-0">
                                 <thead className="table-light">
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Número de cuenta</th>
+                                        <th className="ps-4">Cuenta</th>
+                                        <th>Socio</th>
                                         <th>Tipo</th>
                                         <th>Saldo</th>
-                                        <th>Fecha de apertura</th>
-                                        <th>Estado</th>
-                                        <th>Socio</th>
-                                        <th>Cédula</th>
+                                        <th>Fecha</th>
+                                        <th className="pe-4">Estado</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {cuentas.map((cuenta) => (
                                         <tr key={cuenta.idCuenta}>
-                                            <td>{cuenta.idCuenta}</td>
-                                            <td className="fw-semibold">{cuenta.numeroCuenta}</td>
+                                            <td className="ps-4">
+                                                <div className="fw-semibold text-dark">{cuenta.numeroCuenta}</div>
+                                                <div className="text-muted" style={{ fontSize: '12px' }}>ID: {cuenta.idCuenta}</div>
+                                            </td>
+                                            <td>
+                                                <div className="fw-semibold text-dark">
+                                                    {cuenta.socio ? `${cuenta.socio.nombres} ${cuenta.socio.apellidos}` : 'No disponible'}
+                                                </div>
+                                                <div className="text-muted" style={{ fontSize: '12px' }}>
+                                                    {cuenta.socio?.cedula || ''}
+                                                </div>
+                                            </td>
                                             <td>
                                                 <span
                                                     className={`badge ${
                                                         cuenta.tipoCuenta === 'AHORRO'
-                                                            ? 'text-bg-primary'
-                                                            : 'text-bg-info'
+                                                            ? 'bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25'
+                                                            : 'bg-info bg-opacity-10 text-info border border-info border-opacity-25'
                                                     }`}
                                                 >
                                                     {cuenta.tipoCuenta}
                                                 </span>
                                             </td>
-                                            <td className="fw-semibold">
+                                            <td className="fw-bold text-dark">
                                                 {formatearDinero(cuenta.saldo)}
                                             </td>
                                             <td>{formatearFecha(cuenta.fechaApertura)}</td>
-                                            <td>
+                                            <td className="pe-4">
                                                 <span
                                                     className={`badge ${
                                                         cuenta.activa
-                                                            ? 'text-bg-success'
-                                                            : 'text-bg-secondary'
+                                                            ? 'bg-success'
+                                                            : 'bg-secondary'
                                                     }`}
                                                 >
                                                     {cuenta.activa ? 'Activa' : 'Inactiva'}
                                                 </span>
                                             </td>
-                                            <td>
-                                                {cuenta.socio
-                                                    ? `${cuenta.socio.nombres} ${cuenta.socio.apellidos}`
-                                                    : 'No disponible'}
-                                            </td>
-                                            <td>{cuenta.socio?.cedula || 'No disponible'}</td>
                                         </tr>
                                     ))}
                                 </tbody>

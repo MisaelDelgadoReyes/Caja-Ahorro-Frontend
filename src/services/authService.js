@@ -18,7 +18,7 @@ export const login = async (credentials) => {
         // Si la petición es exitosa, Spring ha creado una sesión. 
         // Retornamos los datos que espera el contexto de React.
         return { data: { token: 'session-cookie', usuario: { id: 1, nombre: credentials.usuario } } };
-    } catch (error) {
+    } catch {
         throw new Error('Credenciales incorrectas');
     }
 };
