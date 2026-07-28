@@ -2,6 +2,26 @@
 
 Proyecto frontend para la gestión de la caja de ahorro. Construido con React, Vite, React Router, Bootstrap y Axios.
 
+### Responsabilidades
+
+#### Backend
+
+https://github.com/MisaelDelgadoReyes/Sistema-Caja-Ahorro
+
+- Misael Delgado Arquitectura Base y Seguridad (Módulo Core)
+- Alex Balón Gestión de Socios y Cuentas
+- Denisse Pazmiño Ciclo de Vida del Crédito y Amortización
+- Andres Moran Transacciones de Ventanilla y Libro Diario (Contabilidad)
+
+### Frontend
+
+https://github.com/MisaelDelgadoReyes/Caja-Ahorro-Frontend
+
+- Misael Delgado creación de login y seguridad.
+- Denisse Pazmiño pagina de socios, cuentas.
+- Andres Moran paginas para ahorros, transacciones.
+- Alex Balón Dashboard, Reportes, Gráficas, Pruebas, Documentación
+
 ## Requisitos previos
 
 - Node.js y npm instalados en el sistema.
